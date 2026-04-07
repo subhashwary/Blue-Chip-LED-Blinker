@@ -1,0 +1,26 @@
+...
+#include "stm32f10x.h"
+
+void delay(volatile uint32_t time) {
+    while(time--);
+}
+
+int main(void) {
+
+    // 1. Enable clock for GPIOC
+    RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+
+    // 2. Configure PC13 as output (Push-Pull, 2 MHz)
+    GPIOC->CRH &= ~(GPIO_CRH_MODE13 | GPIO_CRH_CNF13); // Clear bits
+    GPIOC->CRH |= GPIO_CRH_MODE13_1; // Output mode, max speed 2 MHz
+
+    while(1) {
+        // LED ON (PC13 LOW)
+        GPIOC->BSRR = GPIO_BSRR_BR13;
+        delay(500000);
+
+        // LED OFF (PC13 HIGH)
+        GPIOC->BSRR = GPIO_BSRR_BS13;
+        delay(500000);
+    }
+}
